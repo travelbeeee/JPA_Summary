@@ -1,13 +1,18 @@
 package hellojpa;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
+@Table(name = "user")
 public class Member {
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
     private String name;
+
+    @Enumerated(EnumType.STRING)
+    private UserType userType;
 
     public Long getId() {
         return id;
