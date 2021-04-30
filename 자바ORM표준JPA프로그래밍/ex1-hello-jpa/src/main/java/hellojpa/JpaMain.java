@@ -15,11 +15,13 @@ public class JpaMain {
         tx.begin();
 
         try {
-            Member member = new Member();
-            member.setId(1L);
-            member.setName("member1");
+            Member member = em.find(Member.class, 1L);
+            member.setName("changedName");
 
-            em.persist(member);
+            em.clear();
+
+            Member member1 = em.find(Member.class, 1L);
+            System.out.println(member1.getName());
 
             tx.commit();
         }
