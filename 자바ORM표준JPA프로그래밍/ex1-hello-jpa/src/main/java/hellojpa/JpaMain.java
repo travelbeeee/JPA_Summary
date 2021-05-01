@@ -15,11 +15,19 @@ public class JpaMain {
         tx.begin();
 
         try {
-            Member member2 = new Member();
-            member2.setId(2L);
-            member2.setName("member2");
+            //팀 저장
+            Team team = new Team();
+            team.setName("TeamA");
+            em.persist(team);
 
-            em.persist(member2);
+            //회원 저장
+            Member member = new Member();
+            member.setName("member1");
+            member.setTeam(team); //단방향 연관관계 설정, 참조 저장
+            em.persist(member);
+
+            System.out.println("member = " + member);
+            Team findTeam = em.find(Team.class, team.getId());
 
             tx.commit();
         }

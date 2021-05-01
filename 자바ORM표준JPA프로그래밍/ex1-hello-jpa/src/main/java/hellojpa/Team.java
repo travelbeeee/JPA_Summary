@@ -1,25 +1,36 @@
 package hellojpa;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 @Entity
-public class Member {
+public class Team {
     @Id @GeneratedValue
-    @Column(name = "MEMBER_ID")
+    @Column(name = "TEAM_ID")
     private int id;
 
     private String name;
 
-    @ManyToOne @JoinColumn(name = "TEAM_ID")
-    private Team team;
+    @OneToMany(mappedBy = "team")
+    private List<Member> members = new ArrayList<>();
 
     @Override
     public String toString() {
-        return "Member{" +
+        return "Team{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", team=" + team +
+                ", members=" + members +
                 '}';
+    }
+
+    public List<Member> getMembers() {
+        return members;
+    }
+
+    public void setMembers(List<Member> members) {
+        this.members = members;
     }
 
     public int getId() {
@@ -36,14 +47,5 @@ public class Member {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Team getTeam() {
-        return team;
-    }
-
-    public void setTeam(Team team) {
-        this.team = team;
-        team.getMembers().add(this);
     }
 }

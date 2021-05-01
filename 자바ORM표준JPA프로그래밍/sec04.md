@@ -195,7 +195,7 @@ public class Member {
 
 ### 10) @Id
 
-@Id 애노테이션은 필드를 테이블의 primary_key 로 설정해줍니다.
+@Id 애노테이션이 붙은 필드는 테이블의 primary_key가 됩니다.
 
 <br>
 
@@ -242,6 +242,8 @@ public class Member {
 
   @Sequence Generator 에 name 값은 필수이고, allocationSize 는 시퀀스 한 번 호출에 증가하는 수 입니다. 성능 최적화에 사용되고 데이터베이스 시퀀스 값이 하나씩 증가하도록 설정되어 있으면 기본 값이 50이므로 이 값을 반드시 1로 설정해야합니다. 
 
+  > SEQUENCE 전략도 em.persist() 시점에 SEQUENCE 를 참조해서 ID 값을 가지고와야된다. 따라서 SQL 쿼리가 발생하는데 이를 최적화하기위해 allocationSize 를 적당히 설정하면 된다. 예를 들어, 50인 기본값으로 설정하면 하나의 트랜잭션에서 동시에 50명의 Member를 em.persist() 하더라도 한 번만 SEQUENCE 를 참조하면 된다. 한 번에 50개를 미리 가져오기 때문이다. 그 대신에 SEQUENCE 값이 50개씩 증가하므로 ID 값으로 쓰이지 않는 값들이 존재하게 된다.
+
 - @GeneratedValue(strategy = GenerationType.TABLE)
 
   : 키 생성용 테이블 사용하는 방식으로 모든 DB에서 사용합니다. 테이블이 하나 더 만들어지므로 성능이 좋지 않습니다.
@@ -258,7 +260,7 @@ public class Member {
     ```java
     @Entity
     @TableGenerator( name = "MEMBER_SEQ_GENERATOR", table = "MY_SEQUENCES",
-    				pkColumnValue = “MEMBER_SEQ", allocationSize = 1)
+    				pkColumnValue = "MEMBER_SEQ", allocationSize = 1)
     public class Member {
         @Id
         @GeneratedValue(strategy = GenerationType.TABLE,
