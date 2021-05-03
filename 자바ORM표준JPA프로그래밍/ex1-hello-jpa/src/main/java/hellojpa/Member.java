@@ -5,15 +5,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-public class Member {
+public class Member extends BaseEntity{
     @Id @GeneratedValue
     @Column(name = "MEMBER_ID")
     private int id;
 
     private String name;
 
-    @ManyToMany
-    private List<Product> products = new ArrayList<>();
+//    @ManyToMany
+//    private List<Product> products = new ArrayList<>();
 
 //    @OneToOne
 //    @JoinColumn(name = "LOCKER_ID")
