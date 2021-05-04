@@ -1,7 +1,5 @@
 package hellojpa;
 
-import org.hibernate.Hibernate;
-
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
@@ -17,23 +15,39 @@ public class JpaMain {
         tx.begin();
 
         try {
+            //팀 저장
+            Team team = new Team();
+            team.setName("team1");
+
             //회원 저장
             Member member = new Member();
             member.setName("member1");
+            member.setTeam(team);
+
             em.persist(member);
+            em.persist(team);
+
+            //회원 저장
+//            Member member2 = new Member();
+//            member2.setName("member2");
+//            member2.setTeam(team);
+//
+//            em.persist(member2);
 
             em.flush();
             em.clear();
 
-            Member refMember = em.getReference(Member.class, member.getId());
-            System.out.println("refMember.getName() 실행 전");
-            System.out.println(emf.getPersistenceUnitUtil().isLoaded(refMember));
+            System.out.println("===========em.find Before================");
+            Member findMember = em.find(Member.class, member.getId());
+            System.out.println("===========em.find After================");
+            System.out.println("Member.team = " + findMember.getTeam().getName());
 
-            Hibernate.initialize(refMember);
-
-            System.out.println("refMember.getName() 실행 후");
-            System.out.println(emf.getPersistenceUnitUtil().isLoaded(refMember));
-
+//            System.out.println("===========em.find Before================");
+//            Team findTeam = em.find(Team.class, team.getId());
+//            System.out.println("===========em.find After================");
+//            for (Member m : findTeam.getMembers()) {
+//                System.out.println("Member = " + m.getName());
+//            }
             tx.commit();
         }
         catch (Exception e){

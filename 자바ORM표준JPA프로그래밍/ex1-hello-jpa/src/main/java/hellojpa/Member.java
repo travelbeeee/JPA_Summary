@@ -5,12 +5,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-public class Member extends BaseEntity{
+public class Member {
     @Id @GeneratedValue
     @Column(name = "MEMBER_ID")
     private int id;
 
     private String name;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "TEAM_ID")
+    private Team team;
 
 //    @ManyToMany
 //    private List<Product> products = new ArrayList<>();
@@ -20,8 +24,6 @@ public class Member extends BaseEntity{
 //    private Locker locker;
 
 
-//    @ManyToOne @JoinColumn(name = "TEAM_ID")
-//    private Team team;
     public int getId() {
         return id;
     }
@@ -38,12 +40,12 @@ public class Member extends BaseEntity{
         this.name = name;
     }
 
-//    public Team getTeam() {
-//        return team;
-//    }
-//
-//    public void setTeam(Team team) {
-//        this.team = team;
-//        team.getMembers().add(this);
-//    }
+    public Team getTeam() {
+        return team;
+    }
+
+    public void setTeam(Team team) {
+        this.team = team;
+        team.getMembers().add(this);
+    }
 }

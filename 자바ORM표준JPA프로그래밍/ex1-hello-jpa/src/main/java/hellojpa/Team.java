@@ -13,8 +13,7 @@ public class Team {
 
     private String name;
 
-    @OneToMany
-//    @JoinColumn(name = "TEAM_ID")
+    @OneToMany(mappedBy = "team", fetch = FetchType.LAZY)
     private List<Member> members = new ArrayList<>();
 
     public List<Member> getMembers() {
