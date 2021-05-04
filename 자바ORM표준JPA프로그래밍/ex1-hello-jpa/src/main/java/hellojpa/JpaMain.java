@@ -15,39 +15,25 @@ public class JpaMain {
         tx.begin();
 
         try {
-            //팀 저장
-            Team team = new Team();
-            team.setName("team1");
+            Child child1 = new Child();
+            Child child2 = new Child();
+            Parent parent = new Parent();
 
-            //회원 저장
-            Member member = new Member();
-            member.setName("member1");
-            member.setTeam(team);
+            parent.getChildList().add(child1);
+            parent.getChildList().add(child2);
+            child1.setParent(parent);
+            child2.setParent(parent);
 
-            em.persist(member);
-            em.persist(team);
+            em.persist(child1);
+            em.persist(child2);
+            em.persist(parent);
 
-            //회원 저장
-//            Member member2 = new Member();
-//            member2.setName("member2");
-//            member2.setTeam(team);
-//
-//            em.persist(member2);
+            Parent findParent = em.find(Parent.class, parent.getId());
+            findParent.getChildList().remove(0);
 
-            em.flush();
-            em.clear();
-
-            System.out.println("===========em.find Before================");
-            Member findMember = em.find(Member.class, member.getId());
-            System.out.println("===========em.find After================");
-            System.out.println("Member.team = " + findMember.getTeam().getName());
-
-//            System.out.println("===========em.find Before================");
-//            Team findTeam = em.find(Team.class, team.getId());
-//            System.out.println("===========em.find After================");
-//            for (Member m : findTeam.getMembers()) {
-//                System.out.println("Member = " + m.getName());
-//            }
+            for (Child c : findParent.getChildList()) {
+                System.out.println("c = " + c.getId());
+            }
             tx.commit();
         }
         catch (Exception e){
