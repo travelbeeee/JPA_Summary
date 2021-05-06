@@ -15,25 +15,20 @@ public class JpaMain {
         tx.begin();
 
         try {
-            Child child1 = new Child();
-            Child child2 = new Child();
-            Parent parent = new Parent();
+            Member member1 = new Member();
+            member1.getDeliveryAddress().add(new Address("City1", "Street1", "zipCode1"));
+            member1.getDeliveryAddress().add(new Address("City2", "Street2", "zipCode2"));
+            member1.getDeliveryAddress().add(new Address("City3", "Street3", "zipCode3"));
+            em.persist(member1);
 
-            parent.getChildList().add(child1);
-            parent.getChildList().add(child2);
-            child1.setParent(parent);
-            child2.setParent(parent);
+            em.flush();
+            em.clear();
 
-            em.persist(child1);
-            em.persist(child2);
-            em.persist(parent);
+            System.out.println("========================");
+            Member findMember = em.find(Member.class, member1.getId());
+            findMember.getDeliveryAddress().remove(new Address("City1", "Street1", "zipCode1"));
+            findMember.getDeliveryAddress().add(new Address("newCity1", "Street1", "Zipcode1"));
 
-            Parent findParent = em.find(Parent.class, parent.getId());
-            findParent.getChildList().remove(0);
-
-            for (Child c : findParent.getChildList()) {
-                System.out.println("c = " + c.getId());
-            }
             tx.commit();
         }
         catch (Exception e){

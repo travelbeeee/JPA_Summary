@@ -2,7 +2,9 @@ package hellojpa;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 public class Member {
@@ -12,9 +14,46 @@ public class Member {
 
     private String name;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "TEAM_ID")
-    private Team team;
+    @Embedded
+    Address address;
+
+    @ElementCollection
+    @CollectionTable(name = "FAVORITE_FOOD",
+    joinColumns = @JoinColumn(name = "MEMBER_ID"))
+    @Column(name = "FOOD_NAME")
+    Set<String> favoriteFoods = new HashSet<>();
+
+    @ElementCollection
+    @CollectionTable(name = "DELIVERY_ADDRESS",
+            joinColumns = @JoinColumn(name = "MEMBER_ID"))
+    List<Address> deliveryAddress = new ArrayList<>();
+
+    public Set<String> getFavoriteFoods() {
+        return favoriteFoods;
+    }
+
+    public void setFavoriteFoods(Set<String> favoriteFoods) {
+        this.favoriteFoods = favoriteFoods;
+    }
+
+    public List<Address> getDeliveryAddress() {
+        return deliveryAddress;
+    }
+
+    public void setDeliveryAddress(List<Address> deliveryAddress) {
+        this.deliveryAddress = deliveryAddress;
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "TEAM_ID")
+//    private Team team;
 
 //    @ManyToMany
 //    private List<Product> products = new ArrayList<>();
@@ -40,12 +79,4 @@ public class Member {
         this.name = name;
     }
 
-    public Team getTeam() {
-        return team;
-    }
-
-    public void setTeam(Team team) {
-        this.team = team;
-        team.getMembers().add(this);
-    }
 }
