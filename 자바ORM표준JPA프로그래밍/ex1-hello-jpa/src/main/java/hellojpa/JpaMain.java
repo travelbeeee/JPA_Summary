@@ -4,6 +4,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
+import java.util.List;
 
 public class JpaMain {
     public static void main(String[] args) {
@@ -15,20 +16,47 @@ public class JpaMain {
         tx.begin();
 
         try {
-            Member member1 = new Member();
-            member1.getDeliveryAddress().add(new Address("City1", "Street1", "zipCode1"));
-            member1.getDeliveryAddress().add(new Address("City2", "Street2", "zipCode2"));
-            member1.getDeliveryAddress().add(new Address("City3", "Street3", "zipCode3"));
+            Team teamA = new Team("teamA");
+            Team teamB = new Team("teamB");
+            Team teamC = new Team("teamC");
+
+            Member member1 = new Member("member1", teamA);
+            Member member2 = new Member("member2", teamA);
+            Member member3 = new Member("member3", teamA);
+            Member member4 = new Member("member4", teamB);
+            Member member5 = new Member("member5", teamB);
+            Member member6 = new Member("member6", teamC);
+            Member member7 = new Member("member7", null);
+
+            teamA.getMembers().add(member1);
+            teamA.getMembers().add(member2);
+            teamA.getMembers().add(member3);
+            teamB.getMembers().add(member4);
+            teamB.getMembers().add(member5);
+            teamC.getMembers().add(member6);
+
+            em.persist(teamA);
+            em.persist(teamB);
+            em.persist(teamC);
             em.persist(member1);
+            em.persist(member2);
+            em.persist(member3);
+            em.persist(member4);
+            em.persist(member5);
+            em.persist(member6);
+            em.persist(member7);
 
             em.flush();
             em.clear();
 
-            System.out.println("========================");
-            Member findMember = em.find(Member.class, member1.getId());
-            findMember.getDeliveryAddress().remove(new Address("City1", "Street1", "zipCode1"));
-            findMember.getDeliveryAddress().add(new Address("newCity1", "Street1", "Zipcode1"));
+            List<Member> members = em.createQuery("select m from Member m join fetch m.team", Member.class)
+                    .getResultList();
 
+            System.out.println("=====================================");
+            for (Member member : members) {
+                System.out.println(member);
+                System.out.println(member.getTeam());
+            }
             tx.commit();
         }
         catch (Exception e){

@@ -14,46 +14,48 @@ public class Member {
 
     private String name;
 
-    @Embedded
-    Address address;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "TEAM_ID")
+    private Team team;
 
-    @ElementCollection
-    @CollectionTable(name = "FAVORITE_FOOD",
-    joinColumns = @JoinColumn(name = "MEMBER_ID"))
-    @Column(name = "FOOD_NAME")
-    Set<String> favoriteFoods = new HashSet<>();
-
-    @ElementCollection
-    @CollectionTable(name = "DELIVERY_ADDRESS",
-            joinColumns = @JoinColumn(name = "MEMBER_ID"))
-    List<Address> deliveryAddress = new ArrayList<>();
-
-    public Set<String> getFavoriteFoods() {
-        return favoriteFoods;
+    public Team getTeam() {
+        return team;
     }
 
-    public void setFavoriteFoods(Set<String> favoriteFoods) {
-        this.favoriteFoods = favoriteFoods;
+    public void setTeam(Team team) {
+        this.team = team;
     }
 
-    public List<Address> getDeliveryAddress() {
-        return deliveryAddress;
+    public Member(){}
+    public Member(String name, Team team) {
+        this.name = name;
+        this.team = team;
     }
 
-    public void setDeliveryAddress(List<Address> deliveryAddress) {
-        this.deliveryAddress = deliveryAddress;
+    @Override
+    public String toString() {
+        return "Member{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
     }
 
-    public Address getAddress() {
-        return address;
-    }
+    //    @Embedded
+//    Address address;
 
-    public void setAddress(Address address) {
-        this.address = address;
-    }
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "TEAM_ID")
-//    private Team team;
+//    @ElementCollection
+//    @CollectionTable(name = "FAVORITE_FOOD",
+//    joinColumns = @JoinColumn(name = "MEMBER_ID"))
+//    @Column(name = "FOOD_NAME")
+//    Set<String> favoriteFoods = new HashSet<>();
+//
+//    @ElementCollection
+//    @CollectionTable(name = "DELIVERY_ADDRESS",
+//            joinColumns = @JoinColumn(name = "MEMBER_ID"))
+//    List<Address> deliveryAddress = new ArrayList<>();
+
+
+
 
 //    @ManyToMany
 //    private List<Product> products = new ArrayList<>();

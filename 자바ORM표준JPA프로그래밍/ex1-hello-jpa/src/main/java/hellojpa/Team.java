@@ -13,8 +13,30 @@ public class Team {
 
     private String name;
 
-//    @OneToMany(mappedBy = "team", fetch = FetchType.LAZY)
-//    private List<Member> members = new ArrayList<>();
+    @OneToMany(mappedBy = "team", fetch = FetchType.LAZY)
+    private List<Member> members = new ArrayList<>();
+
+    @Override
+    public String toString() {
+        return "Team{" +
+                "name='" + name + '\'' +
+                '}';
+    }
+
+    public Team() {
+    }
+
+    public Team(String name) {
+        this.name = name;
+    }
+
+    public List<Member> getMembers() {
+        return members;
+    }
+
+    public void setMembers(List<Member> members) {
+        this.members = members;
+    }
 
     public int getId() {
         return id;
