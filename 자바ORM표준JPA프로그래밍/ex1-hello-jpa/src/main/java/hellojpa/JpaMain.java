@@ -1,9 +1,7 @@
 package hellojpa;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
+import javax.persistence.*;
+import java.util.Collection;
 import java.util.List;
 
 public class JpaMain {
@@ -49,14 +47,23 @@ public class JpaMain {
             em.flush();
             em.clear();
 
-            List<Member> members = em.createQuery("select m from Member m join fetch m.team", Member.class)
-                    .getResultList();
+//            List<Member> members = em.createQuery("select m from Member m join fetch m.team", Member.class)
+//                    .getResultList();
+//
+//            System.out.println("=====================================");
+//            for (Member member : members) {
+//                System.out.println(member);
+//                System.out.println(member.getTeam());
+//            }
 
-            System.out.println("=====================================");
-            for (Member member : members) {
-                System.out.println(member);
-                System.out.println(member.getTeam());
+//            List<Team> resultList = em.createQuery("SELECT m.team FROM Member m", Team.class).getResultList();
+
+            List<Member> result = em.createQuery("SELECT m From Team t join t.members m", Member.class)
+                    .getResultList();
+            for (Member member : result) {
+                System.out.println("member = " + member);
             }
+
             tx.commit();
         }
         catch (Exception e){
