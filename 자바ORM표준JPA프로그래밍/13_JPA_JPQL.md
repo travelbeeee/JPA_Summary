@@ -130,8 +130,6 @@ JPA는 SQL에서 지원해주는 조인을 모두 지원해준다.
   select count(m) from Member m, Team t where m.username = t.name
   ```
 
-  
-
 - 내부 조인 ( Inner Join )
 
   ```java

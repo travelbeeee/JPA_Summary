@@ -13,7 +13,7 @@ public class Member {
 
     private String name;
 
-    @ManyToOne(fetch = FetchType.XXX)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "TEAM_ID")
     private Team team;
 }	
@@ -252,3 +252,61 @@ Team{name='teamC'}
 
 ##### --> 1회의 쿼리로 다 가지고 오게 된다.
 
+<br>
+
+### 6) SELECT t FROM Team t JOIN FETCH t.members ( EAGER, LAZY )
+
+```java
+List<Team> teams = em.createQuery("select t from Team t join fetch t.members", Team.class)
+    .getResultList();
+
+System.out.println("=====================================");
+for (Team team : teams) {
+    System.out.println("team = " + team);
+    for (Member m : team.getMembers()) {
+        System.out.println("m = " + m);
+    }
+}
+```
+
+```sql
+		select
+            team0_.TEAM_ID as team_id1_9_0_,
+            members1_.MEMBER_ID as member_i1_5_1_,
+            team0_.name as name2_9_0_,
+            members1_.name as name2_5_1_,
+            members1_.TEAM_ID as team_id3_5_1_,
+            members1_.TEAM_ID as team_id3_5_0__,
+            members1_.MEMBER_ID as member_i1_5_0__ 
+        from
+            Team team0_ 
+        inner join
+            Member members1_ 
+                on team0_.TEAM_ID=members1_.TEAM_ID
+                
+=====================================
+team = Team{name='teamA'}
+m = Member{id=4, name='member1'}
+m = Member{id=5, name='member2'}
+m = Member{id=6, name='member3'}
+team = Team{name='teamA'}
+m = Member{id=4, name='member1'}
+m = Member{id=5, name='member2'}
+m = Member{id=6, name='member3'}
+team = Team{name='teamA'}
+m = Member{id=4, name='member1'}
+m = Member{id=5, name='member2'}
+m = Member{id=6, name='member3'}
+team = Team{name='teamB'}
+m = Member{id=7, name='member4'}
+m = Member{id=8, name='member5'}
+team = Team{name='teamB'}
+m = Member{id=7, name='member4'}
+m = Member{id=8, name='member5'}
+team = Team{name='teamC'}
+m = Member{id=9, name='member6'}
+```
+
+반대로 Team 에서 켤렉션 타입인 Members Fetch Join으로 조회해보자.
+
+##### --> 1회의 쿼리로 다 가지고 오게 된다. 하지만, 일대다 관계에서 Join 이므로 데이터가 중복된다.
