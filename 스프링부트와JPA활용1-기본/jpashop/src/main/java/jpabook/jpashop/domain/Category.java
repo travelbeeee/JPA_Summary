@@ -13,7 +13,7 @@ import java.util.List;
 public class Category {
     @Id @GeneratedValue
     @Column(name = "CATEGORY_ID")
-    private int id;
+    private Integer id;
 
     private String name;
 

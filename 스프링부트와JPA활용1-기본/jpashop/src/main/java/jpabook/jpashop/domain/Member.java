@@ -14,7 +14,7 @@ public class Member {
 
     @Id @GeneratedValue
     @Column(name = "MEMBER_ID")
-    private int id;
+    private Integer id;
 
     private String name;
 
