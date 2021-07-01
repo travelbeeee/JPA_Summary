@@ -262,15 +262,14 @@ public class Member {
         private Long id;
     }
     ```
-    
 
-> 주의!!
->
-> TABLE / SEQUENCE 전략 모두 @SequenceGenerator, @TableGenerator 없이 여러 개의 엔티티에서 기본 값으로 설정하게 되면 Table 명과 Sequence 명이 겹치게 되서 에러가 발생한다!
->
-> --> @SequenceGenerator, @TableGenerator 를 사용해서 명시해주자. 
+- 주의!
 
-<br>
+  TABLE / SEQUENCE 전략 모두 @SequenceGenerator, @TableGenerator 없이 여러 개의 엔티티에서 기본 값으로 설정하게 되면 Table, Sequence가 하나 생성되어 공용으로 사용한다.
+
+  --> @SequenceGenerator, @TableGenerator 를 사용해서 명시해주자. 
+
+  <br>
 
 - **TABLE / SEQUENCE 전략 최적화 설정**
 
