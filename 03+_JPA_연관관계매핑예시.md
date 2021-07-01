@@ -1,6 +1,10 @@
-### 0) 상황
+# JPA_연관관계매핑예시
 
-회원(Member)와 회원마다 팀(Team)이 있는 상황이다.
+예시를 통해 JPA 에서 연관관계를 매핑하는 방법에 대해서 알아보자.  
+
+### 0) 시나리오
+
+회원(Member)과 회원마다 팀(Team)이 있는 상황이다.
 
 따라서, 하나의 팀에는 여러 회원이 있을 수 있고, 하나의 회원에는 하나의 팀만 존재한다.
 
@@ -27,7 +31,7 @@ member.setTeamId(team.getId());
 em.persist(member);
 ```
 
-팀과 회원 정보를 하나씩 DB에 저장했다고 하자. 회원을 DB에서 조회해서 회원이 속한 팀을 조회하려면 다음과 같은 문제가 발생한다.
+팀과 회원 정보를 하나씩 DB에 저장했다고 하자. 회원을 DB에서 조회해서 회원이 속한 팀을 조회하려면 다음과 같은 문제가 발생한다. 회원을 DB에서 가져오고, 회원이 속한 팀을 추가로 DB에서 가져와야된다.
 
 ```java
 Member findMember = em.find(Member.class, memberId);
@@ -37,7 +41,7 @@ Team findTeam = em.find(Team.class, teamId);
 
  우리가 객체 입장에서 생각해보면, Member.getTeam 으로 Team 객체를 바로 조회하는게 자연스럽다. 하지만, DB 테이블 설계에 맞춰서 객체를 설계했으므로 위와 같이 teamId 값을 참조해서 다시 Team 객체를 DB에서 꺼내와야된다.
 
-**테이블은 외래 키로 조인을 사용해서 연관된 테이블을 찾고, 객체는 참조를 사용해서 연관된 객체를 찾는다. 테이블과 객체는 이런 큰 차이가 존재하고 따라서 테이블에 맞추어 객체를 모델링하면 협력 관계를 만들 수 없다.**
+ **테이블은 외래 키로 조인을 사용해서 연관된 테이블을 찾고, 객체는 참조를 사용해서 연관된 객체를 찾는다. 테이블과 객체는 이런 큰 차이가 존재하고 따라서 테이블에 맞추어 객체를 모델링하면 협력 관계를 만들 수 없다.**
 
 <br>
 
@@ -211,120 +215,3 @@ Team 클래스에도 Member를 담을 List를 선언해주고, 반대로 Team �
 > - 외래키를 가지고 있는 엔티티를 주인으로 삼자.
 
 <br>
-
-그러면, 양방향 매핑을 할 때 값을 어떻게 할당해줘야할까??
-
-```java
-Team team = new Team();
-team.setName("TeamA");
-em.persist(team);
-
-Member member = new Member();
-member.setName("member1");
-member.setTeam(team); //연관관계의 주인에 값 설정
-em.persist(member);
-```
-
-연관관계의 주인에만 값을 설정해주면 DB 테이블에서는 우리가 원하는 대로 값이 들어간다.
-
-하지만, 다음과 같은 문제가 있다.
-
-```java
-//팀 저장
-Team team = new Team();
-team.setName("TeamA");
-em.persist(team);
-
-//회원 저장
-Member member = new Member();
-member.setName("member1");
-member.setTeam(team); //단방향 연관관계 설정, 참조 저장
-em.persist(member);
-
-Team findTeam = em.find(Team.class, team.getId());
-
-tx.commit();
-```
-
-현재 findTeam 을 찾아올 때는 team, member가 DB에 반영된 것이 아니라 1차 캐시에 올라와있는 상태이다. 따라서, findTeam.members에는 member가 셋팅이 되어있지 않다!!
-
---> 문제 발생!!! 
-
---> 그냥 연관관계 편의 메서드를 이용해서 한 번에 둘다 값을 셋팅해주자.
-
-```java
-    public void setTeam(Team team) {
-        this.team = team;
-        team.getMembers().add(this);
-    }
-```
-
-위처럼 Member에서 setTeam을 할 때, team 객체의 List<Member> 에도 값을 셋팅해주도록 설정하자!
-
-물론, Team에서 setMembers 할 때 해줘도된다.
-
-> 참고!
->
-> setTeam 보다는 changeTeam 등 의미있는 메소드 명으로 바꿔서 사용하는게 더 좋다!!
-
-<br>
-
-### 4) 주의사항!!
-
-양방향 매핑이 되었을 때 롬복을 이용해서 Member, Team ToString 메소드를 만들면 다음과 같이 만들어진다.
-
-```java
-@Entity
-public class Member {
-    @Id @GeneratedValue
-    @Column(name = "MEMBER_ID")
-    private int id;
-
-    private String name;
-
-    @ManyToOne @JoinColumn(name = "TEAM_ID")
-    private Team team;
-
-    @Override
-    public String toString() {
-        return "Member{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", team=" + team +
-                '}';
-    }
-}
-
-@Entity
-public class Team {
-    @Id @GeneratedValue
-    @Column(name = "TEAM_ID")
-    private int id;
-
-    private String name;
-
-    @OneToMany(mappedBy = "team")
-    private List<Member> members = new ArrayList<>();
-
-    @Override
-    public String toString() {
-        return "Team{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", members=" + members +
-                '}';
-    }
-}
-```
-
- DB에서 Member를 1개 가져와서 출력한다고 해보자.
-
-```java
-System.out.println("member = " + member);
-```
-
-그러면 member.toString() 이 호출된다. member.toString() 을 가보면 team 객체를 출력하고 있으므로, team.toString() 이 호출된다. team.toString()을 가보면 members 를 출력하고 있으므로, List<Member>에 있는 Member 객체의 toString()을 호출하게 된다.
-
-즉, 무한루프에 갇히게 된다!!
-
-**--> 양방향 관계를 설정할 때는 무한루프를 조심해야된다.**
