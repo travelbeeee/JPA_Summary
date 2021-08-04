@@ -75,8 +75,12 @@ public class Member {
 
 xml에 아래와 같은 속성을 지정하면 데이터베이스 스키마 생성 방식을 정할 수 있습니다. 데이터베이스 방언을 활용해서 데이터베이스에 맞는 DDL 쿼리를 생성해줍니다.
 
+```properties
+spring.jpa.hibernate.ddl-auto:
+```
+
 ```xml
-<property name="hibernate.hbm2ddl.auto" value="" />
+<property name="hibernate.hbm2ddl.auto" value=""/>
 ```
 
 - create : 기존 테이블 삭제 후 다시 생성
@@ -125,7 +129,7 @@ xml에 아래와 같은 속성을 지정하면 데이터베이스 스키마 생�
 
 - columnDefinition : 데이터베이스 컬럽 정보를 직접 줄 수 있습니다.
 
-  > @columnDefinion("varchar(100) default 'EMPTY'")
+  > @columnDefinion("varchar(100) default 'EMPTY' ")
 
 <br>
 
@@ -210,7 +214,7 @@ public class Member {
   create sequence hibernate_sequence start with 1 increment by 1
   ```
 
-  - @SequenceGenerator 를 이용해서 Sequence 를 직접 설정할 수 있습니다.
+  - @SequenceGenerator 를 이용해서 Sequence 를 직접 설정할 수 있습니다. ( 테이블마다 Sequence를 따로 두고 싶으면, @SequenceGenerator 를 이용하자. )
 
   ```java
   @Entity
@@ -225,7 +229,7 @@ public class Member {
   }
   ```
 
-  @Sequence Generator 에 name 값은 필수입니다.
+  @SequenceGenerator 에 name 값은 필수입니다.
 
 - **@GeneratedValue(strategy = GenerationType.TABLE)**
 
