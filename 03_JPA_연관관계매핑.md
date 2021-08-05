@@ -144,18 +144,18 @@ public class Team {
 다대일 관계와 마찬가지로 연관관계의 주인에 관계를 표현해주는 @OneToMany 애노테이션과 "TEAM_ID" 를 외래키로 삼으므로 @JoinColumn(name = "TEAM_ID") 를 설정해주어야한다.
 
 ```java
-            //회원 저장
-            Member member = new Member();
-            member.setName("member1");
-            em.persist(member);
+//회원 저장
+Member member = new Member();
+member.setName("member1");
+em.persist(member);
 
-            //팀 저장
-            Team team = new Team();
-            team.setName("TeamA");
-            team.getMembers().add(member); // Team 객체의 필드를 바꾸지만 Team 테이블을 건드려야되는 작업이 아니다!
-            em.persist(team);
+//팀 저장
+Team team = new Team();
+team.setName("TeamA");
+team.getMembers().add(member); // Team 객체의 필드를 바꾸지만 Member 테이블을 건드려야되는 작업.
+em.persist(team);
 
-            tx.commit();
+tx.commit();
 ```
 
 Team이 연관관계의 주인이므로 회원을 저장하고, Team에 회원을 셋팅해주기만 하면 된다.
@@ -344,7 +344,7 @@ public class Locker {
 
 ![jpa_17](https://user-images.githubusercontent.com/59816811/116843819-18332980-ac1c-11eb-913f-8293beb0c09d.png)
 
-이 방법은 그냥 주 테이블에 외래키가 있는 경우의 양방향과 구현 방법이 동일하다. ( Locker 가 연관관계 주인이라도 생각하면 결국 그냥 똑같다. )
+이 방법은 그냥 주 테이블에 외래키가 있는 경우의 양방향과 구현 방법이 동일하다. ( Locker 가 연관관계 주인이라고 생각하면 결국 그냥 똑같다. )
 
 <br>
 
