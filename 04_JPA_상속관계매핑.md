@@ -1,6 +1,6 @@
 # JPA_상속관계매핑
 
-### 상속관계 매핑
+### 0) 상속관계 매핑
 
  관계형 데이터베이스는 객체처럼 상속 관계가 따로 없다. 그래서, 객체 상속과 유사한 슈퍼타입 - 서브타입 모델링 기법을 이용해서 객체의 상속 관계를 표현해야한다.
 
@@ -83,8 +83,6 @@ public class Movie extends Item {
     private String director;
     private String actor;
 }
-
-
 ```
 
 <br>
@@ -221,4 +219,3 @@ public class Movie extends Item {
 ```
 
  이 전략은 사용하지 않는게 좋다. 예를 들어, 전체 판매 가격을 조회하기 위해 모든 Item의 price를 조회하려고 해도 3개의 테이블을 참조해야되고, Item 번호가 N번인 Item을 조회하려면 3개의 테이블을 UNION 해서 모두 조회해야하는 등 많은 단점이 있다.
-
