@@ -1,8 +1,16 @@
 ### JPA Join, FetchJoin 상황별 비교 정리
 
+ 일반 조인 실행시 기본적으로 연관된 엔티티를 함께 조회하지 않는다. 다만 Join 쿼리가 날라가서 2개의 테이블을 참조할 뿐 지정한 엔티티만 조회 하게된다.
+
+```java
+"select t from Team t join t.members m";
+// 쿼리를 날려도 결국엔 Team t 엔티티만 조회가 된다.
+// Team t 엔티티의 members 필드는 비어있게된다.
+```
+
 <br>
 
-### 0) 엔티티 
+### 0) 엔티티 상황 
 
 ```java
 @Entity
