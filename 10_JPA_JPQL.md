@@ -1,26 +1,22 @@
-# JPA_JPQL
+# JPA_JPQL ( Java Persistence Query Language )
 
 ### 0) JPQL 이란
 
-JPA를 사용하면 엔티티 객체를 중심으로 개발을 하게 된다. 따라서, 검색을 할 때도 테이블이 아닌 엔티티 객체를 대상으로 검색을 하게된다. 
+ JPA를 사용하면 엔티티 객체를 중심으로 개발을 하게 된다. 따라서, 검색을 할 때도 테이블이 아닌 엔티티 객체를 대상으로 검색을 하게된다. 결국 애플리케이션이 필요한 데이터만 DB에서 불러오려면 검색 조건이 포함된 SQL이 필요하다.
 
---> 모든 DB 데이터를 객체로 변환해서 검색하는 것은 불가능
+ JPA는 SQL을 추상화한 JPQL 이라는 객체 지향 쿼리 언어를 제공하고, JPQL을 이용하면 엔티티 객체를 대상으로 쿼리를 날릴 수 있습니다. (테이블을 대상으로 쿼리를 날리는 SQL과 차이)  또, SQL 과 문법이 유사해 SELECT, FROM, WHERE, GROUP BY, HAVING, JOIN 을 지원해줍니다.
 
---> 애플리케이션이 필요한 데이터만 DB에서 불러오려면 결국 검색 조건이 포함된 SQL 이 필요
-
-JPA는 SQL을 추상화한 JPQL 이라는 객체 지향 쿼리 언어를 제공하고, JPQL을 이용하면 엔티티 객체를 대상으로 쿼리를 날릴 수 있습니다. SQL 과 문법이 유사해 SELECT, FROM, WHERE, GROUP BY, HAVING, JOIN 을 지원해줍니다.
-
-##### JPQL 이란 객체 지향 SQL !
-
-특정 SQL 문법에 의존적이지 않다. ( 추상화해서 다 지원해줌 )
+> **정리!!**
+>
+> ##### JPQL 이란 객체 지향 SQL ! 또, 특정 SQL 문법에 의존적이지 않다. ( 추상화해서 다 지원해줌 )
 
 <br>
 
 ### 1) JPQL 문법
 
-- JPQL 키워드는 대소문자 구분 X
+- JPQL 키워드는 대소문자 구분 X ( select, from )
 
-- 엔티티와 속성은 대소문자 구분 O (Member m, m.age)
+- 엔티티와 속성은 대소문자 구분 O ( Member m, m.age )
 
 - 테이블 이름이 아니라 엔티티 이름을 사용하고 **별칭이 필수**다!
 
@@ -56,22 +52,18 @@ JPA는 SQL을 추상화한 JPQL 이라는 객체 지향 쿼리 언어를 제공�
 
 ### 2) 프로젝션
 
-프로젝션은 SELECT 절에 조회할 대상을 지정하는 행위를 말한다. 대상으로는 엔티티 타입, 임베디드 타입, 스칼라 타입(숫자, 문자 등 기본 데이터 타입) 이 있다.
-
-![jpa_28](https://user-images.githubusercontent.com/59816811/117246302-5e37f980-ae77-11eb-8817-c2012bae7736.png)
-
-먼저, 기본 셋팅은 위와 같다.
+ 프로젝션은 SELECT 절에 조회할 대상을 지정하는 행위를 말한다. 대상으로는 엔티티 타입, 임베디드 타입, 스칼라 타입(숫자, 문자 등 기본 데이터 타입) 이 있다.
 
 - SELECT m FROM Member m --> 엔티티 프로젝션
-- SELECT m.team FROm Member m --> 엔티티 프로젝션
+- SELECT m.team FROM Member m --> 엔티티 프로젝션
 - SELECT m.address FROM Member m --> 임베디드 타입 프로젝션
 - SELECT m.username, m.age FROM Member m --> 스칼라 타입 프로젝션
 
 > 엔티티 프로젝션으로 가져온 객체는 모두 영속성 컨텍스트에서 관리된다.
 
-엔티티 프로젝션 혹은 임베디드 타입 프로젝션은 우리가 반환 타입을 명확히 기술해 줄 수 있다. 하지만, 스칼라 타입 같이 여러 값을 조회하면 어떻게 받을 수 있을까??
+ 엔티티 프로젝션 혹은 임베디드 타입 프로젝션은 우리가 반환 타입을 명확히 기술해 줄 수 있다. 하지만, 스칼라 타입을 여러 가지 조회하면 어떻게 받을 수 있을까??
 
-먼저, Object[] 객체로 값을 받아올 수 있다. 하지만, 사용하기가 불편하다.
+ 먼저, Object[] 객체로 값을 받아올 수 있다. 
 
 ```java
 List<Object[]> resultList = em.createQuery("select m.username, m.age from Member m")
@@ -80,7 +72,9 @@ Object[] result = resultList.get(0);
 // result[0] 은 m.username, result[1]은 m.age 가 된다.
 ```
 
---> memberDTO 를 만들어서 문제를 해결하자!
+하지만, 사용하기가 불편하다. 
+
+DTO 를 통해 값을 받아올 수 있다.
 
 ```java
 package jpql;
@@ -101,7 +95,7 @@ em.createQuery("select new jpql.MemberDTO(m.username, m.age) from Member m", Mem
                     .getResultList();
 ```
 
-DTO를 이용할 때는 패키지 명을 포함한 전체 클래스명을 입력해줘야되고, 순서와 타입이 일치하는 생성자가 필요합니다. 
+ **DTO를 이용할 때는 패키지 명을 포함한 전체 클래스명을 입력해줘야되고, 순서와 타입이 일치하는 생성자가 필요합니다.** 
 
 <br>
 
@@ -141,13 +135,16 @@ JPA는 SQL에서 지원해주는 조인을 모두 지원해준다.
   ```java
   em.createQuery("select m from Member m inner join m.team t", Member.class)
           .getResultList();
+  
           
   em.createQuery("select m from Member m inner join m.team t on m.xxx = t.xxx", Member.class)
           .getResultList();
   
+  // Member Team 엔티티가 연관관계가 없을 때
   em.createQuery("select m from Member m inner join Team t", Member.class)
           .getResultList();
   
+  // Member Team 엔티티가 연관관계가 없을 때
   em.createQuery("select m from Member m inner join Team t on m.xxx = t.xxx", Member.class)
           .getResultList();
   ```
@@ -185,10 +182,10 @@ JPA는 일반적인 SQL의 서브 쿼리를 다 지원해준다.
 
 하지만, SQL의 서브 쿼리와 다르게 다음의 제약 조건이 있다.
 
-- JPA는 WHERE, HAVING 절에서만 서브 쿼리 사용 가능
-- 하이버네이트에서 SELECT 절에서도 서브 쿼리 사용 지원
+- **JPA는 WHERE, HAVING 절에서만 서브 쿼리 사용 가능**
+- **하이버네이트에서는 SELECT 절에서도 서브 쿼리 사용 지원**
 - **FROM 절의 서브 쿼리는 JPQL 에서 사용 불가능**
-  - 조인으로 풀 수 있으면 풀어서 해결하고, 아니면 Native SQL 을 이용하던가 해야함...!!
+  - 조인으로 풀 수 있으면 풀어서 해결하고, 아니면 Native SQL 을 이용해야한다.
 
 ```java
 //예시
@@ -211,30 +208,35 @@ select mm from (select m. age from Member m) as mm
 ### 6) JPQL 타입 표현
 
 - 문자 : 'Hello', 'She''s'
-
 - 숫자 : 10L, 10D, 10F, 10
-
 - Boolean : True, False
+- ENUM : 패키지명을 포함해서 기술해야한다.
 
-- ENUM : jpa.MemberType.ADMIN (패키지명을 포함해서 기술)
+```java
+Strign query = "select m.uesrname from Member m where m.type = jpql.MemberType.USER"; // 패키지명 기술
 
-  --> 파라미터 바인딩을 이용하자.
+// 파라미터 바인딩을 이용
+Strign query = "select m.uesrname from Member m where m.type = :type"; 
+
+em.createQuery(query)
+    .setParameter("type", MemberType.USER);
+```
 
 <br>
 
 ### 7) 조건식 - CASE 식
 
-JPQL 에서는 기본 CASE 식, 단순 CASE 식, COALESCE, NULLIF 를 모두 사용할 수 있다.
+ JPQL 에서는 기본 CASE 식, 단순 CASE 식, COALESCE, NULLIF 를 모두 사용할 수 있다.
 
 - COALESCE : 하나씩 조회해서 null이 아니면 반환
 - NULLIF : 두 값이 같으면 null 반환, 다르면 첫 번째 값 반환
 
 ```java
-"select case when m.age <= 10 then '학생요금'
-			when m.age >= 60 then '경로요금'
-			else '일반요금'
-            end
-            from Member m";
+"select case when m.age <= 10 then '학생요금' " +
+			"when m.age >= 60 then '경로요금' " +
+			"else '일반요금' " +
+            "end " +
+            "from Member m";
             
 "select
 	case t.name
@@ -265,3 +267,5 @@ from Team t"
 - SIZE ( 컬렉션의 크기를 반환해줌, JPA 용도)
 
 위의 함수들도 다 지원해줍니다.
+
+<br>
