@@ -211,6 +211,23 @@ System.out.println(emf.getPersistenceUnitUtil().isLoaded(refMember)); // true
 
   refMember는 프록시 객체이므로 영속성 컨텍스트에게 초기화 요청을 해야한다. 하지만, refMember가 준영속 상태이므로 영속성 컨텍스트에게 초기화 요청을 할 수 없게 된다. 
 
-  
+- 영속성 상태의 프록시 객체에 값을 변경하면 영속성 컨텍스트의 `Dirty Checking` 기능을 이용할 수 있다. 즉, 실제 엔티티와 동일하게 동작한다.
 
+  ```java
+  @Test
+  @Transactional
+  void 프록시객체테스트(){
+      Member refMember = em.getReference(Member.class, 1L);
+      PersistenceUnitUtil persistenceUnitUtil = emf.getPersistenceUnitUtil();
+      System.out.println("isLoaded : " + persistenceUnitUtil.isLoaded(refMember)); // false
+      refMember.getEmail(); // select query
+      System.out.println("isLoaded : " + persistenceUnitUtil.isLoaded(refMember)); // true
+      refMember.changePassword("kkkkk"); 
+      em.flush(); // update query
+  }
+  ```
+
+   
+
+  
 
